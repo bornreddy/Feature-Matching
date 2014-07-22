@@ -19,8 +19,7 @@ createEvalList list1 list2 = [(x,y) | x <- list1] ++ createEvalList list1 (tail 
 gaussian :: Float -> (Float,Float) -> Float
 gaussian  sigma tuple = exp (-1* (((x**2)/(2*sigma**2)) + ((y**2)/(2*sigma**2))))
 	 where x = fst tuple
-	       y = snd tuple
-	
+	       y = snd tuple	
 
 gaussianKernel :: Integer -> Float -> Array U DIM2 Float
 gaussianKernel size sigma = fromListUnboxed (Z:.3:.3::DIM2) (map (gaussian sigma) evalList)
@@ -33,9 +32,24 @@ getImage filePath = runIL $ do
     (Grey greyData) <- readImage filePath
     return greyData
 
+     
+--assume that all rows are of equal length
+
+--convertToRepa :: [[Float]] -> Array F DIM2 Word8
+--convertToRepa flatImageData = fromListUnboxed (Z :. w :. h :: DIM2) flatImageData
+   -- where w = length flatImageData
+   --       h = length flatImageData!!0
+
+--makeImage flatImageData = runIL $ do
+--  writeImage ("output.jpg") (Grey repaImage)
+--  where repaImage = convertToRepa flatImageData
+
 main = do
-	let im1 = "notredame.jpg"
-	runIL $ do 
-		(Grey greyData) <- readImage im1
-	--	(Grey filtered) <- filterImage sobelKernel greyData
-		writeImage ("output.jpg") (Grey greyData) 
+    let im1 = toList $ getImage "notredame.jpg"
+    --in makeImage im1
+    --let im1 = "notredame.jpg"
+    --(Grey greyData) <- readImage im1
+    --imageData <- toList greyData
+    --(Grey filtered) <- filterImage sobelKernel greyData
+    --writeImage ("output.jpg") (Grey greyData) 
+    4 + 4
