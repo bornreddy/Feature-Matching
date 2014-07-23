@@ -4,7 +4,7 @@ import qualified Data.Array.Repa as R
 import Data.Array.Repa hiding ((++),map)
 import Data.Array.Repa.IO.DevIL (runIL, readImage, writeImage, IL, Image(Grey))
 import Data.Array.Repa.Repr.ForeignPtr (F)
-import Data.Array.Repa.Algorithms
+--import Data.Array.Repa.Algorithms
 
 sobelKernel = fromListUnboxed (Z :. 3 :. 3 :: DIM2) ([-1,0,1,-2,0,2,-1,0,1]::[Float])
 
@@ -26,8 +26,8 @@ gaussianKernel :: Integer -> Float -> Array U DIM2 Float
 gaussianKernel size sigma = fromListUnboxed (Z:.3:.3::DIM2) (map (gaussian sigma) evalList)
 	       where evalList = createEvalList [fromInteger(quot size (-2))..fromInteger(quot size 2)] (reverse [fromInteger(quot size (-2))..fromInteger(quot size 2)])
 
-filterImage :: Array U DIM2 Float -> Array U DIM2 Float -> Array U DIM2 Float
-filterImage kernel image = conv.convolve kernel image     
+--filterImage :: Array U DIM2 Float -> Array U DIM2 Float -> Array U DIM2 Float
+--filterImage kernel image = conv.convolve kernel image     
 
 getImage filePath = runIL $ do
     (Grey greyData) <- readImage filePath
@@ -37,5 +37,5 @@ main = do
 	let im1 = "notredame.jpg"
 	runIL $ do 
 		(Grey greyData) <- readImage im1
-		(Grey filtered) <- filterImage sobelKernel greyData
-		writeImage ("output.jpg") (Grey filtered) 
+	--	(Grey filtered) <- filterImage sobelKernel greyData
+		writeImage ("output.jpg") (Grey greyData) 
