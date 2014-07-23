@@ -1,10 +1,12 @@
 import System.Environment (getArgs)
 import Data.Word (Word8)
---import Data.Array.Repa as R
---import Data.Array.Repa hiding ((++))import Data.Array.Repa.IO.DevIL (runIL, readImage, writeImage, IL, Image(RGB))
---import Data.Array.Repa.Repr.ForeignPtr (F)
+import qualified Data.Array.Repa as R
+import Data.Array.Repa hiding ((++),map)
+import Data.Array.Repa.IO.DevIL (runIL, readImage, writeImage, IL, Image(Grey))
+import Data.Array.Repa.Repr.ForeignPtr (F)
+import Data.Array.Repa.Algorithms
 
---sobel = fromListUnboxed (Z :. 3 :. 3 :: DIM2) ([-1,0,1,-2,0,2,-1,0,1]::[Int])
+sobelKernel = fromListUnboxed (Z :. 3 :. 3 :: DIM2) ([-1,0,1,-2,0,2,-1,0,1]::[Float])
 
 createEvalList :: [Float] -> [Float] -> [(Float,Float)]
 createEvalList list1 [] = []
@@ -20,20 +22,20 @@ gaussian  sigma tuple = exp (-1* (((x**2)/(2*sigma**2)) + ((y**2)/(2*sigma**2)))
 	       y = snd tuple
 	
 
-gaussianKernel :: Integer -> Float -> [Float]
-gaussianKernel size sigma = map (gaussian sigma) evalList
+gaussianKernel :: Integer -> Float -> Array U DIM2 Float
+gaussianKernel size sigma = fromListUnboxed (Z:.3:.3::DIM2) (map (gaussian sigma) evalList)
 	       where evalList = createEvalList [fromInteger(quot size (-2))..fromInteger(quot size 2)] (reverse [fromInteger(quot size (-2))..fromInteger(quot size 2)])
 
+filterImage :: Array U DIM2 Float -> Array U DIM2 Float -> Array U DIM2 Float
+filterImage kernel image = conv.convolve kernel image     
 
-     
+getImage filePath = runIL $ do
+    (Grey greyData) <- readImage filePath
+    return greyData
 
-
---getImage filePath = runIL $ do
---    (RGB rgbData) <- readImage filePath
---    return rgbData
-
---main = do
---	let im1 = "notredame.jpg"
---	runIL $ do 
---		(RGB rgbData) <- readImage im1
---		writeImage ("output.jpg") (RGB rgbData) 
+main = do
+	let im1 = "notredame.jpg"
+	runIL $ do 
+		(Grey greyData) <- readImage im1
+		(Grey filtered) <- filterImage sobelKernel greyData
+		writeImage ("output.jpg") (Grey filtered) 
