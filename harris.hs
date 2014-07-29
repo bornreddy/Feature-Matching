@@ -22,6 +22,7 @@ to2DList row col list
 		where helper _ [] = []
 		      helper c list = take c list : helper c (drop c list)
 
+
 main = do
 	im <- readFile "imlist.txt"
 	let image = read im :: [[Float]]
