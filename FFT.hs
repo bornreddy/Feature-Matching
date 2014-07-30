@@ -1,4 +1,5 @@
 import Data.Complex
+import Data.List
 
 fft_recur :: [Complex Float] -> [Complex Float]
 fft_recur [a] = [a]
@@ -28,10 +29,10 @@ roots_gen n = reverse (helper n n)
 complexify :: [Float] -> [Complex Float]
 complexify arr = map (:+ 0.0) arr 
 
-row_fft :: [[Float]] -> [[Complex Float]]
-row_fft rows = map fft_recur $ map complexify rows
+row_fft :: [[Complex Float]] -> [[Complex Float]]
+row_fft rows = map fft_recur rows
 
 fft2 :: [[Float]] -> [[Complex Float]]
-fft2 image = transpose $ row_fft $ transpose $ row_fft image
+fft2 image = transpose $ row_fft $ transpose $ row_fft (map complexify image)
 
 --     = map FFT 1-d onto a 2-d array
