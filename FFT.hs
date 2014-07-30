@@ -1,12 +1,12 @@
 import Data.Complex
 import Data.List
 
-fft_recur :: [Complex Float] -> [Complex Float]
-fft_recur [a] = [a]
-fft_recur arr = 
+fft :: [Complex Float] -> [Complex Float]
+fft [a] = [a]
+fft arr = 
     let split = fft_split arr
-    	even_coef = fft_recur (fst split)
-    	odd_coef = fft_recur (snd split)
+    	even_coef = fft (fst split)
+    	odd_coef = fft (snd split)
         even_doubled = (even_coef)++(even_coef) 
         odd_doubled = (odd_coef)++(odd_coef) 
         roots = roots_gen (fromIntegral $ length even_doubled :: Float) 
@@ -29,10 +29,16 @@ roots_gen n = reverse (helper n n)
 complexify :: [Float] -> [Complex Float]
 complexify arr = map (:+ 0.0) arr 
 
-row_fft :: [[Complex Float]] -> [[Complex Float]]
-row_fft rows = map fft_recur rows
+row_apply :: ([Complex Float]->[Complex Float]) -> [[Complex Float]] -> [[Complex Float]]
+row_apply func rows = map func rows
+
+
+ifft :: [Complex Float] -> [Complex Float]
+ifft arr = map ( / a ) $ map conjugate $ fft $ map conjugate arr
+	    where a = (fromIntegral $ length arr) :+ 0.0
 
 fft2 :: [[Float]] -> [[Complex Float]]
-fft2 image = transpose $ row_fft $ transpose $ row_fft (map complexify image)
+fft2 image = transpose $ row_apply fft $ transpose $ row_apply fft (map complexify image)
 
---     = map FFT 1-d onto a 2-d array
+ifft2 :: [[Complex Float]] -> [[Complex Float]]
+ifft2 frequencies = transpose $ row_apply ifft $ transpose $ row_apply ifft (frequencies)
