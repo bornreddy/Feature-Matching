@@ -1,25 +1,20 @@
 import Data.Complex
---TODO write a function to turn [Float]->[Complex Float]
+
 fft_recur :: [Complex Float] -> [Complex Float]
-fft_recur [a] = [a :+ 0.0]
+fft_recur [a] = [a]
 fft_recur arr = 
-    let a = fft_split arr in fft_recur (fst a) + x* fft_recur (snd a)
-
-    -- trying to figure out where to do the recursion, probably after 'split = ...'
     let split = fft_split arr
-        even = (fst split)++(fst split) 
-        odd = (snd split)++(snd split) 
-        roots = roots_gen (length even) 
-        
-    in zipWith (+) even (zipWith (*) odd roots)
-       
+    	even_coef = fft_recur (fst split)
+    	odd_coef = fft_recur (snd split)
+        even_doubled = (even_coef)++(even_coef) 
+        odd_doubled = (odd_coef)++(odd_coef) 
+        roots = roots_gen (fromIntegral $ length even_doubled :: Float) 
+    in zipWith (+) even_doubled (zipWith (*) odd_doubled roots)
 
-
-fft_split :: [Float] -> ([Float],[Float])
+fft_split :: [Complex Float] -> ([Complex Float],[Complex Float])
 fft_split [] = ([],[])
 fft_split [x] = ([x],[])
 fft_split (x:y:xs) = (x:xp, y:yp) where (xp, yp) = fft_split xs
-
 
 roots_gen :: Float -> [Complex Float]
 roots_gen n = reverse (helper n n)
@@ -30,3 +25,13 @@ roots_gen n = reverse (helper n n)
 	        new_list = helper n (i-1)
             in (k * head new_list):new_list
 
+complexify :: [Float] -> [Complex Float]
+complexify arr = map (:+ 0.0) arr 
+
+row_fft :: [[Float]] -> [[Complex Float]]
+row_fft rows = map fft_recur $ map complexify rows
+
+fft2 :: [[Float]] -> [[Complex Float]]
+fft2 image = transpose $ row_fft $ transpose $ row_fft image
+
+--     = map FFT 1-d onto a 2-d array
