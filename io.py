@@ -1,5 +1,5 @@
 import scipy as sp
-import Image
+from PIL import Image
 import os
 
 def image_IO(filename):
@@ -21,11 +21,13 @@ def image_IO(filename):
 		myString+=']'
 	myString+=']'
  
-	with open('imlist.txt','wb') as outFile: 
+	with open('notredame.smi','wb') as outFile: 
 		outFile.write(myString)		
-	
+
+#write readFile for .smo
+
 
 if __name__=='__main__':
 	filename="notredame.jpg"
 	image_IO(filename) 
-		
+

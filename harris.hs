@@ -23,7 +23,9 @@ to2DList row col list
 		      helper c list = take c list : helper c (drop c list)
 
 
+
 main = do
 	im <- readFile "imlist.txt"
 	let image = read im :: [[Float]]
+	writeFile "image.smo" "hello world"
 	print 5

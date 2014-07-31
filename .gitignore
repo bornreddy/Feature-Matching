@@ -27,3 +27,7 @@ tramp
 
 # AUCTeX auto folder
 /auto/
+
+.txt
+.smi
+.smo
