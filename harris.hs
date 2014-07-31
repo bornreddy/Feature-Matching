@@ -22,10 +22,12 @@ to2DList row col list
 		where helper _ [] = []
 		      helper c list = take c list : helper c (drop c list)
 
-
+list2string :: [[Float]] -> [Char]
+list2string list = foldr (\x y -> x (',' : y)) "\n" (map shows list)
 
 main = do
-	im <- readFile "imlist.txt"
+	im <- readFile "sample_image.smi"
 	let image = read im :: [[Float]]
-	writeFile "image.smo" "hello world"
+	let image_string = list2string image
+	writeFile "sample_image.smo" image_string
 	print 5
