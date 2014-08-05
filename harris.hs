@@ -1,3 +1,5 @@
+import Data.List
+
 sobelKernel = [[-1,0,1],[-2,0,2],[-1,0,1]]
 
 createEvalList :: [Float] -> [Float] -> [(Float,Float)]
@@ -24,6 +26,16 @@ to2DList row col list
 
 list2string :: [[Float]] -> [Char]
 list2string list = foldr (\x y -> x (',' : y)) "\n" (map shows list)
+
+pad :: Int -> Int -> [[Float]] -> [[Float]]
+pad xdim ydim matrix = transpose $ padDim offsetx $ transpose $ padDim offsety matrix
+    where offsetx = xdim - (length $ matrix!!0)
+          offsety = ydim - length matrix
+
+padDim :: Int -> [[Float]] -> [[Float]] 
+padDim offset matrix 
+    | offset >= 0 = [[0.0 | x<-[1..(length $ matrix!!0)]] | y<-[1..offset]]++matrix
+    | otherwise = take (offset + length matrix) matrix
 
 main = do
 	im <- readFile "sample_image.smi"

@@ -1,4 +1,5 @@
 import scipy as sp
+from scipy import misc
 from PIL import Image
 import os
 
@@ -24,14 +25,29 @@ def writeSMI(filename="sample_image.jpg"):
 		outFile.write(myString)		
 
 def readSMO(filename="sample_image.smo"):
-	im = Image.open(filename)
+	imageList = []
+	tempList = []
+	with open(filename,'rb') as inFile:
+		stringArray = inFile.read().split(",")
 	
+	#import pdb; pdb.set_trace()
+
+	for char in stringArray:
+		if char[0] == '[':	
+			tempList = [int(sp.around(float(char[1:])))]
+		elif char[-1] == ']':
+			imageList.append(tempList)
+		elif char == '\n':
+			pass
+		else:
+			tempList.append(int(sp.around(float(char))))
+
+	imageList = sp.array(imageList)
+	misc.imsave("final_converted.jpg",imageList)
 	
-
-
 
 if __name__=='__main__':
-	writeSMI() 
-	os.system("./harris")
-	
+	#writeSMI() 
+	#os.system("./harris")
+	readSMO()
 
