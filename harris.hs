@@ -37,9 +37,15 @@ padDim offset matrix
     | offset >= 0 = [[0.0 | x<-[1..(length $ matrix!!0)]] | y<-[1..offset]]++matrix
     | otherwise = take (offset + length matrix) matrix
 
+findPadPower :: Float -> Int
+findPadPower dim = 2^(ceiling $ logBase 2 dim)
+
 main = do
 	im <- readFile "sample_image.smi"
 	let image = read im :: [[Float]]
-	let image_string = list2string image
+	let image_x = findPadPower $ fromIntegral $ length $ image!!0
+	let image_y = findPadPower $ fromIntegral $ length $ image	
+	let padded_image = pad image_x image_y image
+	let image_string = list2string padded_image
 	writeFile "sample_image.smo" image_string
 	print 5

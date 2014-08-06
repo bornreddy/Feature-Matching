@@ -46,8 +46,12 @@ def readSMO(filename="sample_image.smo"):
 	misc.imsave("final_converted.jpg",imageList)
 	
 
-if __name__=='__main__':
+
+def main():
 	#writeSMI() 
-	#os.system("./harris")
+	writeSMI("notredame.jpg")
+	os.system("./harris")
 	readSMO()
 
+if __name__=='__main__':
+	main()

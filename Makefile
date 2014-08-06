@@ -1,2 +1,3 @@
 clean:
-	rm *~ *#
+	rm *~ 
+	rm .swp
