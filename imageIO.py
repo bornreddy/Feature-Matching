@@ -48,8 +48,7 @@ def readSMO(filename="sample_image.smo"):
 
 
 def main():
-	#writeSMI() 
-	writeSMI("notredame.jpg")
+	writeSMI() 
 	os.system("./harris")
 	readSMO()
 

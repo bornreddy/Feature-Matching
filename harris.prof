@@ -1,0 +1,42 @@
+	Wed Aug  6 17:43 2014 Time and Allocation Profiling Report  (Final)
+
+	   harris +RTS -p -RTS
+
+	total time  =        0.01 secs   (14 ticks @ 1000 us, 1 processor)
+	total alloc =  12,584,952 bytes  (excludes profiling overheads)
+
+COST CENTRE   MODULE  %time %alloc
+
+main.image    Main     71.4   71.6
+list2string.\ Main     28.6   18.8
+main          Main      0.0    7.1
+pad           Main      0.0    1.5
+
+
+                                                                          individual     inherited
+COST CENTRE          MODULE                             no.     entries  %time %alloc   %time %alloc
+
+MAIN                 MAIN                                52           0    0.0    0.0   100.0  100.0
+ CAF                 Main                               103           0    0.0    0.0   100.0   99.3
+  main               Main                               104           1    0.0    7.1   100.0   99.3
+   main.image_y      Main                               115           1    0.0    0.0     0.0    0.0
+    findPadPower     Main                               116           1    0.0    0.0     0.0    0.0
+   main.image        Main                               113           1   71.4   71.6    71.4   71.6
+   main.image_x      Main                               111           1    0.0    0.0     0.0    0.0
+    findPadPower     Main                               112           1    0.0    0.0     0.0    0.0
+   main.padded_image Main                               107           1    0.0    0.0     0.0    1.7
+    pad              Main                               108           1    0.0    1.5     0.0    1.7
+     pad.offsety     Main                               114           1    0.0    0.0     0.0    0.0
+     pad.offsetx     Main                               110           1    0.0    0.0     0.0    0.0
+     padDim          Main                               109           2    0.0    0.2     0.0    0.2
+   main.image_string Main                               105           1    0.0    0.0    28.6   18.9
+    list2string      Main                               106           1    0.0    0.0    28.6   18.9
+     list2string.\   Main                               117          32   28.6   18.8    28.6   18.8
+ CAF                 GHC.Conc.Signal                    101           0    0.0    0.0     0.0    0.0
+ CAF                 GHC.Float                           96           0    0.0    0.4     0.0    0.4
+ CAF                 GHC.IO.Encoding                     92           0    0.0    0.0     0.0    0.0
+ CAF                 GHC.IO.Encoding.Iconv               90           0    0.0    0.0     0.0    0.0
+ CAF                 GHC.IO.FD                           85           0    0.0    0.0     0.0    0.0
+ CAF                 GHC.IO.Handle.FD                    83           0    0.0    0.3     0.0    0.3
+ CAF                 Text.Read.Lex                       67           0    0.0    0.0     0.0    0.0
+ CAF                 GHC.Integer.Logarithms.Internals    60           0    0.0    0.0     0.0    0.0
