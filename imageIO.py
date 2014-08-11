@@ -3,7 +3,11 @@ from scipy import misc
 from PIL import Image
 import os
 
-def writeSMI(filename="sample_image.jpg"):
+
+def generate_image():
+	continue
+
+def writeSMI(filename="small_image.jpg"):
 	im = Image.open(filename)
 	im = sp.array(im.convert('L'))
 	im = im.tolist()
@@ -32,15 +36,15 @@ def readSMO(filename="sample_image.smo"):
 	
 	#import pdb; pdb.set_trace()
 
-	for char in stringArray:
-		if char[0] == '[':	
-			tempList = [int(sp.around(float(char[1:])))]
-		elif char[-1] == ']':
+	for elem in stringArray:
+		if elem[0] == '[':	
+			tempList = [int(sp.around(float(elem[1:])))]
+		elif elem[-1] == ']':
 			imageList.append(tempList)
-		elif char == '\n':
+		elif elem == '\n':
 			pass
 		else:
-			tempList.append(int(sp.around(float(char))))
+			tempList.append(int(sp.around(float(elem))))
 
 	imageList = sp.array(imageList)
 	misc.imsave("final_converted.jpg",imageList)
@@ -49,6 +53,7 @@ def readSMO(filename="sample_image.smo"):
 
 def main():
 	writeSMI() 
+	os.system("ghc harris.hs")
 	os.system("./harris")
 	readSMO()
 

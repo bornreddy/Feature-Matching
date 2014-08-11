@@ -1,3 +1,5 @@
+module FFT where
+
 import Data.Complex
 import Data.List
 
@@ -28,6 +30,9 @@ roots_gen n = reverse (helper n n)
 
 complexify :: [Float] -> [Complex Float]
 complexify arr = map (:+ 0.0) arr 
+
+decomplexify :: [Complex Float] -> [Float]
+decomplexify arr = map realPart arr
 
 row_apply :: ([Complex Float]->[Complex Float]) -> [[Complex Float]] -> [[Complex Float]]
 row_apply func rows = map func rows
