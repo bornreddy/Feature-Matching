@@ -55,13 +55,13 @@ main = do
 
 	--let padded_gauss = reverse $ map reverse $ pad image_x image_y $ reverse $ map reverse $ pad (image_x `quot` 2) (image_y `quot` 2) gauss_ker
 	--let padded_gauss = pad image_x image_y (transpose sobelKernel)
-	--let padded_gauss = pad image_x image_y sobelKernel
+	let padded_gauss = pad image_x image_y sobelKernel
 	--let padded_gauss = pad image_x image_y bigSobel
 	
 
 
-	let gauss_ker = gaussianKernel gaussian_dim 1.5
-	let padded_gauss = pad image_x image_y gauss_ker
+	--let gauss_ker = gaussianKernel 3 1.5
+	--let padded_gauss = pad image_x image_y gauss_ker
 	let fft_image = fft2 padded_image
 	--for testing: so we can look at the fft_image
 	let visual_fft_image = map decomplexify fft_image

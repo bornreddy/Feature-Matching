@@ -4,8 +4,6 @@ from PIL import Image
 import os
 
 
-def generate_image():
-	continue
 
 def writeSMI(filename="small_image.jpg"):
 	im = Image.open(filename)
