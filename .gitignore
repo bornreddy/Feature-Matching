@@ -31,3 +31,5 @@ tramp
 .txt
 .smi
 .smo
+
+Makefile
