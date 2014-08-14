@@ -55,7 +55,7 @@ main = do
 
 	--let padded_gauss = reverse $ map reverse $ pad image_x image_y $ reverse $ map reverse $ pad (image_x `quot` 2) (image_y `quot` 2) gauss_ker
 	--let padded_gauss = pad image_x image_y (transpose sobelKernel)
-	let padded_gauss = pad image_x image_y sobelKernel
+	let padded_gauss = pad image_x image_y bigSobel
 	--let padded_gauss = pad image_x image_y bigSobel
 	
 
@@ -72,4 +72,4 @@ main = do
 
 	let image_string = list2string blurred_image
 	writeFile "sample_image.smo" image_string
-	print fft_image
+	print 5

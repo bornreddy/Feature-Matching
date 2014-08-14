@@ -1,7 +1,7 @@
 make:
 	python imageIO.py
-	open final_converted.jpg
-	open small_image.jpg
+	gnome-open final_converted.jpg
+	gnome-open small_image.jpg
 clean:
 	rm *~ 
 	rm .swp
