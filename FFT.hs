@@ -2,6 +2,7 @@ module FFT where
 
 import Data.Complex
 import Data.List
+import GHC.Float
 
 fft :: [Complex Float] -> [Complex Float]
 fft [a] = [a]
@@ -32,7 +33,12 @@ complexify :: [Float] -> [Complex Float]
 complexify arr = map (:+ 0.0) arr 
 
 decomplexify :: [Complex Float] -> [Float]
-decomplexify arr = map realPart arr
+decomplexify arr = zipWith (square_of_sum) real imaginary 
+    where real = map (**2) $ map realPart arr
+          imaginary = map (**2) $ map imagPart arr
+
+square_of_sum :: Float -> Float -> Float
+square_of_sum a b = (a+b)**(0.5)
 
 row_apply :: ([Complex Float]->[Complex Float]) -> [[Complex Float]] -> [[Complex Float]]
 row_apply func rows = map func rows
