@@ -1,6 +1,7 @@
 import Data.List
 import FFT
 import Data.Complex
+import Data.List.Split
 
 bigSobel = [[4,3,2,1,0,-1,-2,-3,-4],[5,4,3,2,0,-2,-3,-4,-5],[6,5,4,3,0,-3,-4,-5,-6],[7,6,5,4,0,-4,-5,-6,-7],[8,7,6,5,0,-5,-6,-7,-8],[7,6,5,4,0,-4,-5,-6,-7], [6,5,4,3,0,-3,-4,-5,-6], [5,4,3,2,0,-2,-3,-4,-5], [4,3,2,1,0,-1,-2,-3,-4]]
 
@@ -73,12 +74,27 @@ zipWith2D :: (a-> b -> c) -> [[a]] -> [[b]] -> [[c]]
 zipWith2D f = zipWith . zipWith $ f
 
 harris_corner :: [[Float]] -> [[Float]] -> [[Float]] -> Float -> [[Float]]
-harris_corner sobel gauss image alpha = zipWith2D (-)  (zipWith2D (-) (zipWith2D (*) gdx2 gdy2) gdxdy2) (map2D (*alpha) $ map2D (**2) $ zipWith2D (+) gdx2 gdy2)
+harris_corner sobel gauss image alpha = zipWith2D (-) (zipWith2D (-) (zipWith2D (*) gdx2 gdy2) gdxdy2) (map2D (*alpha) $ map2D (**2) $ zipWith2D (+) gdx2 gdy2)
     where dx = apply_kernel image sobel
           dy = apply_kernel image (transpose sobel)
           gdx2 = apply_kernel (map2D (**2) dx) gauss
           gdy2 = apply_kernel (map2D (**2) dy) gauss
           gdxdy2 = map2D (**2) $ apply_kernel (zipWith (zipWith (*)) dx dy) gauss
+
+threshold :: Float -> Float -> Float
+threshold thresh val 
+          | val < thresh = 0.0
+          | otherwise    = 1.0
+
+local_max :: [[Float]] -> [[Float]]
+local_max
+
+non_max_suppr :: Int -> [[Float]] -> [[Float]]
+non_max_suppr matrix window = map local_max (transpose $ chunksOf window (transpose $ chunksOf window matrix))
+
+
+              
+
 
 main = do
     im <- readFile "sample_image.smi"
@@ -88,10 +104,11 @@ main = do
         pad_y = findPadPower $ fromIntegral (length image)
         pad = centeredPad pad_x pad_y
         padded_image = pad image
-        padded_gauss = pad (gaussianKernel (fromIntegral 15) 16)
+        padded_gauss = pad (gaussianKernel (fromIntegral 7) 0.5)
         padded_sobel = pad [[-1,0,1],[-2,0,2],[-1,0,1]]
-        corners = harris_corner padded_sobel padded_gauss padded_image 0.5 
-        image_string = list2string corners
+        corners = harris_corner padded_sobel padded_gauss padded_image 0.01 
+        thresholded_corners = map2D (threshold 0.5) corners
+        image_string = list2string thresholded_corners
 
     writeFile "sample_image.smo" image_string
     print pad_x

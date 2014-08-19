@@ -15,7 +15,7 @@ def makeSquare(image):
 
 	return image
 
-def writeSMI(filename="small_image.jpg"):
+def writeSMI(filename="paw.jpg"):
 	im = Image.open(filename)
 	im = makeSquare(sp.array(im.convert('L')))
 	im = im.tolist()
@@ -56,7 +56,8 @@ def readSMO(filename="sample_image.smo"):
 
 	imageList = sp.array(imageList)
 	misc.imsave("final_converted.jpg",imageList)
-	
+        
+        
 
 
 def main():
