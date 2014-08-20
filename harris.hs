@@ -2,7 +2,6 @@ import Data.List
 import FFT
 import Data.Complex
 
-sobelKernel = [[-1,0,1],[-2,0,2],[-1,0,1]]
 bigSobel = [[4,3,2,1,0,-1,-2,-3,-4],[5,4,3,2,0,-2,-3,-4,-5],[6,5,4,3,0,-3,-4,-5,-6],[7,6,5,4,0,-4,-5,-6,-7],[8,7,6,5,0,-5,-6,-7,-8],[7,6,5,4,0,-4,-5,-6,-7], [6,5,4,3,0,-3,-4,-5,-6], [5,4,3,2,0,-2,-3,-4,-5], [4,3,2,1,0,-1,-2,-3,-4]]
 
 createEvalList :: [Float] -> [Float] -> [(Float,Float)]
@@ -52,12 +51,6 @@ padDim offset matrix
 findPadPower :: Float -> Int
 findPadPower dim = 2^(ceiling $ logBase 2 dim)
 
---trim_centered :: Int -> [[Float]] -> [[Float]]
---trim_centered dim padded_image = drop ((length padded_image)-dim) padded_image
-
---trim_dim :: Int [[Float]] -> [[Float]]
-
-
 pointwise_mult :: [[Complex Float]] -> [[Complex Float]] -> [[Complex Float]]
 pointwise_mult a b = zipWith (zipWith (*)) a b
 
@@ -67,25 +60,38 @@ rearrange_quadrants matrix = transpose $ rearrange_dim $ transpose $ rearrange_d
 rearrange_dim :: [[Float]] -> [[Float]]
 rearrange_dim matrix  = (drop (quot (length matrix) 2) matrix) ++ (take (quot (length matrix) 2) matrix)
 
+--assumes padded square image and kernel
+apply_kernel :: [[Float]] -> [[Float]] -> [[Float]] 
+apply_kernel image kernel = rearrange_quadrants $ map decomplexify $ ifft2 $ pointwise_mult fft_image fft_kernel
+    where fft_image = fft2 image
+          fft_kernel = fft2 kernel
+ 
+map2D :: (a->b) -> [[a]] -> [[b]]
+map2D f = map . map $ f 
+
+zipWith2D :: (a-> b -> c) -> [[a]] -> [[b]] -> [[c]]
+zipWith2D f = zipWith . zipWith $ f
+
+harris_corner :: [[Float]] -> [[Float]] -> [[Float]] -> Float -> [[Float]]
+harris_corner sobel gauss image alpha = zipWith2D (-)  (zipWith2D (-) (zipWith2D (*) gdx2 gdy2) gdxdy2) (map2D (*alpha) $ map2D (**2) $ zipWith2D (+) gdx2 gdy2)
+    where dx = apply_kernel image sobel
+          dy = apply_kernel image (transpose sobel)
+          gdx2 = apply_kernel (map2D (**2) dx) gauss
+          gdy2 = apply_kernel (map2D (**2) dy) gauss
+          gdxdy2 = map2D (**2) $ apply_kernel (zipWith (zipWith (*)) dx dy) gauss
+
 main = do
     im <- readFile "sample_image.smi"
 
     let image = read im :: [[Float]]
-        gauss_dim = 3
         pad_x = findPadPower $ fromIntegral (length $ image!!0)
         pad_y = findPadPower $ fromIntegral (length image)
-        padded_image = centeredPad pad_x pad_y image
-        padded_gauss = centeredPad pad_x pad_y (gaussianKernel (fromIntegral 15) 16)
-        --padded_gauss = gaussianKernel (fromIntegral 9) 9
-        fft_image = fft2 padded_image
-        fft_gauss = fft2 padded_gauss
-        convolution = pointwise_mult fft_image fft_gauss     
-       -- identity_conv = pointwise_mult fft_image (fft2 [[1 | x<-[1..pad_x]] | x<-[1..pad_x]])
-        --identity_orig = map decomplexify $ ifft2 identity_conv
-        blurred_image = rearrange_quadrants $ map decomplexify $ ifft2 convolution
-        
-       -- trimmed_image = transpose $ trim (length $ image!!0) $ transpose $ trim (length image) blurred_image
-        image_string = list2string blurred_image
+        pad = centeredPad pad_x pad_y
+        padded_image = pad image
+        padded_gauss = pad (gaussianKernel (fromIntegral 15) 16)
+        padded_sobel = pad [[-1,0,1],[-2,0,2],[-1,0,1]]
+        corners = harris_corner padded_sobel padded_gauss padded_image 0.5 
+        image_string = list2string corners
 
     writeFile "sample_image.smo" image_string
     print pad_x
